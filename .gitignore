@@ -1,0 +1,26 @@
+# Helm generated files
+*.tgz
+
+# Helm dependencies
+charts/
+
+# Kubernetes temporary files
+*.tmp
+*.bak
+*.swp
+
+# Local configs
+.env
+.env.*
+
+# Kubernetes local files
+kubeconfig
+*.kubeconfig
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
