@@ -1,0 +1,82 @@
+name: Kubernetes Validation
+
+
+on:
+
+  push:
+
+    branches:
+      - main
+
+    paths:
+      - "kubernetes/**"
+      - "helm/**"
+      - "rbac/**"
+      - ".github/workflows/kubernetes-check.yaml"
+
+
+  pull_request:
+
+    branches:
+      - main
+
+    paths:
+      - "kubernetes/**"
+      - "helm/**"
+      - "rbac/**"
+
+
+
+jobs:
+
+  kubernetes-validation:
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+
+
+      - name: Checkout repository
+
+        uses: actions/checkout@v4
+
+
+
+      - name: Setup kubectl
+
+        uses: azure/setup-kubectl@v4
+
+
+
+      - name: Setup Helm
+
+        uses: azure/setup-helm@v4
+
+
+
+      - name: Validate Kubernetes manifests
+
+        run: |
+
+          kubectl apply \
+          --dry-run=client \
+          -f kubernetes/
+
+
+
+      - name: Validate RBAC manifests
+
+        run: |
+
+          kubectl apply \
+          --dry-run=client \
+          -f rbac/
+
+
+
+      - name: Helm lint
+
+        run: |
+
+          helm lint helm/
