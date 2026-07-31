@@ -1,6 +1,8 @@
 name: Terraform Validation
 
 on:
+  workflow_call:
+    
   push:
     branches:
       - main
