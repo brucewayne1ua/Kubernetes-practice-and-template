@@ -12,18 +12,11 @@ on:
       - "kubernetes/**"
       - "helm/**"
       - "rbac/**"
-      - ".github/workflows/kubernetes-check.yaml"
-
 
   pull_request:
 
     branches:
       - main
-
-    paths:
-      - "kubernetes/**"
-      - "helm/**"
-      - "rbac/**"
 
 
 
@@ -43,15 +36,19 @@ jobs:
 
 
 
-      - name: Setup kubectl
+      - name: Install kubeconform
 
-        uses: azure/setup-kubectl@v4
+        run: |
+
+          curl -L \
+          https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz \
+          -o kubeconform.tar.gz
 
 
+          tar xf kubeconform.tar.gz
 
-      - name: Setup Helm
 
-        uses: azure/setup-helm@v4
+          sudo mv kubeconform /usr/local/bin/
 
 
 
@@ -59,19 +56,27 @@ jobs:
 
         run: |
 
-          kubectl apply \
-          --dry-run=client \
-          -f kubernetes/
+          kubeconform \
+          -strict \
+          -summary \
+          kubernetes/
 
 
 
-      - name: Validate RBAC manifests
+      - name: Validate RBAC
 
         run: |
 
-          kubectl apply \
-          --dry-run=client \
-          -f rbac/
+          kubeconform \
+          -strict \
+          -summary \
+          rbac/
+
+
+
+      - name: Setup Helm
+
+        uses: azure/setup-helm@v4
 
 
 
