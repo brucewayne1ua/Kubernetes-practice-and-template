@@ -48,3 +48,6 @@ jobs:
 
 
     uses: ./.github/workflows/deploy.yaml
+
+
+    secrets: inherit

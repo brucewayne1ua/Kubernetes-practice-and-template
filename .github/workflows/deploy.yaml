@@ -1,40 +1,45 @@
 name: Kubernetes Deploy
 
+
 on:
+
   workflow_call:
-  workflow_run:
-    workflows:
-      - Docker Release
-    types:
-      - completed
+
 
 jobs:
+
   deploy:
-    if: ${{ github.event_name == 'workflow_call' || github.event.workflow_run.conclusion == 'success' }}
+
     runs-on: ubuntu-latest
 
+
     steps:
+
+
       - name: Checkout
         uses: actions/checkout@v4
+
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
 
+
       - name: Configure kubeconfig
         run: |
           mkdir -p ~/.kube
-          if [ -z "${{ secrets.KUBE_CONFIG }}" ]; then
-            echo "KUBE_CONFIG secret is not set" >&2
-            exit 1
-          fi
           printf '%s' "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
 
+
       - name: Test kubectl connection
-        run: kubectl cluster-info
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
 
       - name: Setup Helm
         uses: azure/setup-helm@v4
+
 
       - name: Deploy Helm chart
         run: |
