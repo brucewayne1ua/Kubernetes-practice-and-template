@@ -55,12 +55,14 @@ jobs:
           kubectl get all -n kpractice
 
 
-      - name: Check pods
+      - name: Debug kubernetes
 
         run: |
 
-          kubectl wait \
-          --for=condition=ready pod \
-          --all \
-          -n kpractice \
-          --timeout=120s
+          kubectl describe all -n kpractice
+
+          kubectl get pods -n kpractice -o wide
+
+          kubectl describe pod -n kpractice
+
+          kubectl get events -n kpractice --sort-by=.metadata.creationTimestamp
