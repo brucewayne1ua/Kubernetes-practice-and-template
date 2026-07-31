@@ -1,39 +1,29 @@
-name: Kpractice Full CI
-
+name: Kpractice CI/CD
 
 on:
-
   push:
-
     branches:
       - main
-
-
   pull_request:
-
     branches:
       - main
-
-
 
 jobs:
-
-
-  docker-build:
-
-
-    uses: ./.github/workflows/docker-build.yaml
-
-
+  docker-release:
+    uses: ./.github/workflows/docker-release.yaml
+    secrets: inherit
 
   terraform-check:
-
-
     uses: ./.github/workflows/terraform-check.yaml
 
-
-
   kubernetes-check:
-
-
     uses: ./.github/workflows/kubernetes-check.yaml
+
+  deploy:
+    needs:
+      - docker-release
+      - terraform-check
+      - kubernetes-check
+    if: ${{ github.ref == 'refs/heads/main' && needs.docker-release.result == 'success' && needs.terraform-check.result == 'success' && needs.kubernetes-check.result == 'success' }}
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit

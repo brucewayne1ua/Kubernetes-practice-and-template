@@ -85,4 +85,4 @@ jobs:
 
         run: |
 
-          helm lint helm/
+          helm lint ./helm/nginx-chart
