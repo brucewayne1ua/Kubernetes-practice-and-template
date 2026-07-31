@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t kpractice-app ./docker
+          docker build -t kpractice-app ./docker/nginx
 
       - name: Show Docker images
         run: docker images
