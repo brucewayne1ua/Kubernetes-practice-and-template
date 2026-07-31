@@ -1,4 +1,4 @@
-name: Kubernetes Deploy
+name: Kubernetes Deploy Test
 
 
 on:
@@ -16,34 +16,51 @@ jobs:
     steps:
 
 
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
+      - name: Setup Minikube
+        uses: medyagh/setup-minikube@latest
 
 
-      - name: Configure kubeconfig
+      - name: Verify cluster
+
         run: |
-          mkdir -p ~/.kube
-          printf '%s' "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-          chmod 600 ~/.kube/config
 
-
-      - name: Test kubectl connection
-        run: |
-          kubectl cluster-info
           kubectl get nodes
+
+          kubectl cluster-info
 
 
       - name: Setup Helm
+
         uses: azure/setup-helm@v4
 
 
-      - name: Deploy Helm chart
+      - name: Helm install
+
         run: |
+
           helm upgrade --install kpractice \
           ./helm/nginx-chart \
           --namespace kpractice \
           --create-namespace
+
+
+      - name: Check resources
+
+        run: |
+
+          kubectl get all -n kpractice
+
+
+      - name: Check pods
+
+        run: |
+
+          kubectl wait \
+          --for=condition=ready pod \
+          --all \
+          -n kpractice \
+          --timeout=120s
