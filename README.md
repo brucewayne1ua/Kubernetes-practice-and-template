@@ -1,18 +1,72 @@
-# 🚀 Kubernetes Practice Project
-
-## 🇬🇧 English
+# 🚀 Cloud Native DevOps Platform
 
 ## About this project
 
-This repository is a practical Kubernetes learning project.
+This repository is a practical DevOps portfolio project focused on building and managing a cloud-native deployment workflow.
 
-The project was created **only for educational purposes** and is not a production application.
+The main goal of this project is to gain practical experience with modern DevOps technologies and approaches:
 
-The main goal of this project is to gain practical experience with Kubernetes, Docker, Helm and DevOps workflows.
+- Containerization
+- Kubernetes orchestration
+- Infrastructure as Code
+- CI/CD automation
+- Monitoring
+- GitOps-based deployments
 
-During this project the following technologies and concepts were practiced:
+The project was created for educational purposes and represents a production-like environment.
 
-- Kubernetes cluster management
+---
+
+# 🏗 Architecture Overview
+
+```
+Developer
+    |
+    v
+GitHub Repository
+    |
+    v
+GitHub Actions
+    |
+    +----------------+
+    |                |
+    v                v
+Terraform          Docker
+    |                |
+    v                |
+AWS Resources       |
+                    |
+                    v
+              Kubernetes Cluster
+                    |
+        +-----------+-----------+
+        |                       |
+       Helm                  Argo CD
+        |                       |
+        +-----------+-----------+
+                    |
+                    v
+              Nginx Application
+                    |
+                    v
+            Prometheus + Grafana
+```
+
+---
+
+# 🛠 Technology Stack
+
+## Containerization
+
+- Docker
+- Docker Images
+- Dockerfile
+
+## Kubernetes
+
+- Kubernetes
+- Minikube
+- kubectl
 - Pods
 - Deployments
 - ReplicaSets
@@ -22,345 +76,223 @@ During this project the following technologies and concepts were practiced:
 - Persistent Volumes (PV)
 - Persistent Volume Claims (PVC)
 - Ingress Controller
+- RBAC
+
+## Package Management
+
+- Helm
 - Helm Charts
 - Helm Releases
-- Helm Upgrade and Rollback
-- Docker containers
-- Local Kubernetes development using Minikube
+- Helm Upgrade
+- Helm Rollback
 
+## Infrastructure as Code
 
----
+- Terraform
+- AWS Provider
+- Terraform Modules
+- Infrastructure provisioning
 
-# 🛠 Technology Stack
+## CI/CD
 
-- Docker
-- Docker Desktop
-- Kubernetes
-- Minikube
-- kubectl
-- Helm
-- Nginx
+- GitHub Actions
+- Docker build workflows
+- Kubernetes validation
+- Terraform validation
 
+## Monitoring
+
+- Prometheus
+- Grafana
+- Metrics collection
+- Monitoring dashboards
+
+## GitOps
+
+- Argo CD
+- Declarative deployments
+- Git as a single source of truth
+- Automated synchronization
+- Self-healing deployments
 
 ---
 
 # 📁 Project Structure
 
 ```
-kubernetes-practice/
-
+.
+├── .github/
+│   └── workflows/
 │
-├── kubectl/
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   ├── ingress.yaml
-│   ├── pvc.yaml
-│   ├── configmap.yaml
-│   └── secret.yaml
+├── argocd/
+│   ├── applications/
+│   │   └── nginx-application.yaml
+│   │
+│   └── projects/
+│       └── devops-lab-project.yaml
 │
-└── helm/
-    └── nginx-chart/
-        ├── Chart.yaml
-        ├── values.yaml
-        └── templates/
-            ├── deployment.yaml
-            ├── service.yaml
-            └── ingress.yaml
+├── docker/
+│   └── nginx/
+│       ├── Dockerfile
+│       └── index.html
+│
+├── helm/
+│   └── nginx-chart/
+│
+├── kubernetes/
+│
+├── monitoring-manual/
+│
+├── rbac/
+│
+└── terraform/
+    ├── modules/
+    ├── main.tf
+    ├── providers.tf
+    └── variables.tf
 ```
-
 
 ---
 
-# ▶️ Kubernetes Setup
+# 🚀 Kubernetes Deployment
 
-## Start Minikube
+Start Minikube:
 
 ```bash
 minikube start
 ```
 
-Check cluster status:
-
-```bash
-minikube status
-```
-
-Check Kubernetes nodes:
+Check cluster:
 
 ```bash
 kubectl get nodes
 ```
-
-
----
-
-# Kubernetes Deployment
-
-Apply Kubernetes manifests:
-
-```bash
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
-kubectl apply -f ingress.yaml
-kubectl apply -f pvc.yaml
-```
-
 
 Check resources:
 
 ```bash
 kubectl get pods
-
 kubectl get deployments
-
 kubectl get services
-
 kubectl get ingress
-
 kubectl get pvc
 ```
 
-
 ---
 
-# Docker
+# 📦 Helm Deployment
 
-Docker was used as the container runtime environment.
+Helm is used to package and manage Kubernetes applications.
 
-Check Docker:
-
-```bash
-docker info
-```
-
-List containers:
+Install application:
 
 ```bash
-docker ps
+helm install nginx ./helm/nginx-chart
 ```
 
-List images:
-
-```bash
-docker images
-```
-
-
----
-
-# Helm
-
-Helm was used to package and manage Kubernetes applications.
-
-Helm allows creating reusable Kubernetes templates:
-
-```
-values.yaml
-      |
-      v
-templates/
-      |
-      v
-Kubernetes resources
-```
-
-
-## Create Helm Chart
-
-```bash
-helm create nginx-chart
-```
-
-
-## Check generated Kubernetes manifests
-
-```bash
-helm template nginx-chart .
-```
-
-
-## Install application
-
-```bash
-helm install my-nginx .
-```
-
-
-## Check Helm releases
+Check releases:
 
 ```bash
 helm list
 ```
 
-
-## Upgrade application
-
-```bash
-helm upgrade my-nginx .
-```
-
-
-## Check release history
+Upgrade:
 
 ```bash
-helm history my-nginx
+helm upgrade nginx ./helm/nginx-chart
 ```
 
-
-## Remove release
+Rollback:
 
 ```bash
-helm uninstall my-nginx
+helm rollback nginx
 ```
 
+Remove:
+
+```bash
+helm uninstall nginx
+```
 
 ---
 
-# Application Request Flow
+# 🔄 GitOps with Argo CD
+
+Argo CD manages Kubernetes deployments using Git as the source of truth.
+
+Workflow:
 
 ```
-User
- |
- v
-Ingress
- |
- v
-Service
- |
- v
-Deployment
- |
- v
-Pod
- |
- v
-Container
+GitHub Repository
+        |
+        v
+     Argo CD
+        |
+        v
+    Helm Chart
+        |
+        v
+ Kubernetes Cluster
 ```
 
+Implemented:
+
+- Declarative deployments
+- Git-based configuration management
+- Automated synchronization
+- Self-healing Kubernetes resources
 
 ---
 
-# 🇩🇪 Deutsch
+# 📊 Monitoring
 
-## Über dieses Projekt
+Monitoring architecture:
 
-Dieses Repository ist ein praktisches Kubernetes-Lernprojekt.
+```
+Application
+     |
+     v
+Prometheus
+     |
+     v
+Grafana Dashboard
+```
 
-Das Projekt wurde **nur zu Lernzwecken erstellt** und ist keine produktive Anwendung.
+Implemented:
 
-Das Hauptziel dieses Projekts ist es, praktische Erfahrungen mit Kubernetes, Docker, Helm und DevOps-Workflows zu sammeln.
-
-Während dieses Projekts wurden folgende Themen geübt:
-
-- Verwaltung eines Kubernetes-Clusters
-- Pods
-- Deployments
-- ReplicaSets
-- Services
-- ConfigMaps
-- Secrets
-- Persistent Volumes (PV)
-- Persistent Volume Claims (PVC)
-- Ingress Controller
-- Helm Charts
-- Helm Releases
-- Helm Updates und Rollbacks
-- Docker Container
-- Lokale Kubernetes-Umgebung mit Minikube
-
+- Metrics collection
+- Kubernetes monitoring
+- Visualization dashboards
 
 ---
 
-# 🛠 Technologie-Stack
+# 🌩 Infrastructure as Code
 
-- Docker
-- Docker Desktop
-- Kubernetes
-- Minikube
-- kubectl
-- Helm
-- Nginx
+Terraform manages cloud infrastructure.
 
+Implemented:
 
----
-
-# ▶️ Kubernetes starten
-
-Minikube starten:
-
-```bash
-minikube start
-```
-
-Cluster prüfen:
-
-```bash
-kubectl get nodes
-```
-
+- AWS Provider configuration
+- Terraform modules
+- Network resources
+- Compute resources
+- Storage resources
+- IAM configuration
 
 ---
 
-# Helm verwenden
+# 🎯 Project Goals
 
-Helm Chart erstellen:
+This project demonstrates practical knowledge of:
 
-```bash
-helm create nginx-chart
-```
-
-
-Templates prüfen:
-
-```bash
-helm template nginx-chart .
-```
-
-
-Installation:
-
-```bash
-helm install my-nginx .
-```
-
-
-Update:
-
-```bash
-helm upgrade my-nginx .
-```
-
-
-Release löschen:
-
-```bash
-helm uninstall my-nginx
-```
-
-
----
-
-# Anfragefluss
-
-```
-Benutzer
- |
- v
-Ingress
- |
- v
-Service
- |
- v
-Deployment
- |
- v
-Pod
- |
- v
-Container
-```
-
+✅ Kubernetes administration  
+✅ Docker containerization  
+✅ Helm package management  
+✅ GitHub Actions CI/CD  
+✅ Terraform Infrastructure as Code  
+✅ AWS cloud fundamentals  
+✅ Prometheus and Grafana monitoring  
+✅ GitOps with Argo CD  
 
 ---
 
@@ -368,139 +300,34 @@ Container
 
 ## О проекте
 
-Этот репозиторий — практический учебный проект по Kubernetes.
+Этот репозиторий — практический DevOps-проект, направленный на создание и управление cloud-native инфраструктурой.
 
-Проект создан **исключительно для обучения** и не является production-приложением.
+Основная цель проекта — получить практический опыт работы с современными DevOps технологиями:
 
-Основная цель проекта — получить практический опыт работы с Kubernetes, Docker, Helm и DevOps-процессами.
+- контейнеризация
+- Kubernetes orchestration
+- Infrastructure as Code
+- CI/CD автоматизация
+- мониторинг
+- GitOps подход
 
-В проекте были изучены и применены:
-
-- управление Kubernetes кластером
-- Pods
-- Deployments
-- ReplicaSets
-- Services
-- ConfigMaps
-- Secrets
-- Persistent Volumes (PV)
-- Persistent Volume Claims (PVC)
-- Ingress Controller
-- Helm Charts
-- Helm Releases
-- обновление и откат приложений через Helm
-- Docker контейнеры
-- локальная Kubernetes среда через Minikube
-
+Проект создан в учебных целях и представляет собой приближённую к production среду.
 
 ---
 
-# 🛠 Используемый стек
+# Используемые технологии
 
 - Docker
-- Docker Desktop
 - Kubernetes
 - Minikube
 - kubectl
 - Helm
-- Nginx
-
-
----
-
-# ▶️ Запуск Kubernetes
-
-Запуск Minikube:
-
-```bash
-minikube start
-```
-
-
-Проверка кластера:
-
-```bash
-kubectl get nodes
-```
-
-
----
-
-# Работа через kubectl
-
-Применение Kubernetes конфигураций:
-
-```bash
-kubectl apply -f deployment.yaml
-
-kubectl apply -f service.yaml
-
-kubectl apply -f ingress.yaml
-
-kubectl apply -f pvc.yaml
-```
-
-
-Проверка ресурсов:
-
-```bash
-kubectl get pods
-
-kubectl get deployments
-
-kubectl get services
-
-kubectl get ingress
-
-kubectl get pvc
-```
-
-
----
-
-# Работа через Helm
-
-Создание Helm Chart:
-
-```bash
-helm create nginx-chart
-```
-
-
-Проверка шаблонов:
-
-```bash
-helm template nginx-chart .
-```
-
-
-Установка приложения:
-
-```bash
-helm install my-nginx .
-```
-
-
-Обновление приложения:
-
-```bash
-helm upgrade my-nginx .
-```
-
-
-История релизов:
-
-```bash
-helm history my-nginx
-```
-
-
-Удаление:
-
-```bash
-helm uninstall my-nginx
-```
-
+- Terraform
+- AWS
+- GitHub Actions
+- Prometheus
+- Grafana
+- Argo CD
 
 ---
 
@@ -511,9 +338,10 @@ helm uninstall my-nginx
 ✅ Kubernetes  
 ✅ Docker  
 ✅ Helm  
-✅ Container Orchestration  
-✅ DevOps Workflow  
-✅ Infrastructure as Code подход  
-
+✅ Terraform  
+✅ Cloud Infrastructure  
+✅ CI/CD  
+✅ Monitoring  
+✅ GitOps  
 
 Проект является частью самостоятельного изучения DevOps и Cloud технологий.
